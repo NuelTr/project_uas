@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Book;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -10,11 +11,12 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
-
+public function index()
+{
+    $books = Book::all();
+    
+    return view('admin.books.index', compact('books'));
+}
     /**
      * Show the form for creating a new resource.
      */
