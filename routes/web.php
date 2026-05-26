@@ -6,14 +6,15 @@ use App\Http\Controllers\Admin\LoanController;
 use App\Http\Controllers\UserBookController;
 use Illuminate\Support\Facades\Route;
 
+
 // Dashboard
 Route::get('/', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 // Route untuk admin
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('books', BookController::class);
-    Route::resource('loans', LoanController::class);
-    Route::put('loans/{loan}/return', [LoanController::class, 'returnBook'])->name('loans.return');
+    Route::resource('books', App\Http\Controllers\Admin\BookController::class);
+    Route::resource('loans', App\Http\Controllers\Admin\LoanController::class);
+    Route::put('loans/{loan}/return', [App\Http\Controllers\Admin\LoanController::class, 'returnBook'])->name('loans.return');
 });
 
 // Route untuk user biasa

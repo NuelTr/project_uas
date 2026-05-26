@@ -9,12 +9,13 @@ use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
-    public function index()
-    {
-       $books = Book::latest()->paginate(10);
-    dd($books); // TAMBAHKAN INI DULU untuk test
+
+public function index()
+{
+    $books = Book::all();
+    
     return view('admin.books.index', compact('books'));
-    }
+}
 
     public function create()
     {
