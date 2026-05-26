@@ -1,75 +1,60 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Riwayat Peminjaman Saya
+        </h2>
+    </x-slot>
 
-@section('title', 'Riwayat Peminjaman')
-@section('page-title', 'Riwayat Peminjaman Saya')
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    @if(session('success'))
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
-@section('content')
-<div class="card table-custom">
-    <div class="card-header bg-white border-0 py-3">
-        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Semua Peminjaman</h5>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Buku</th>
-                        <th>Tgl Pinjam</th>
-                        <th>Tenggat</th>
-                        <th>Tgl Kembali</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($loans as $loan)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>
-                            <div>
-                                <strong>{{ $loan->book->title }}</strong>
-                                <br>
-                                <small class="text-muted">ISBN: {{ $loan->book->isbn }}</small>
-                            </div>
-                        </td>
-                        <td>{{ $loan->loan_date->format('d/m/Y') }}</td>
-                        <td>
-                            <span class="badge {{ $loan->due_date->isPast() && $loan->status == 'active' ? 'bg-danger' : 'bg-info' }}">
-                                {{ $loan->due_date->format('d/m/Y') }}
-                            </span>
-                            @if($loan->due_date->isPast() && $loan->status == 'active')
-                                <br><small class="text-danger">Terlambat!</small>
-                            @endif
-                        </td>
-                        <td>{{ $loan->return_date ? $loan->return_date->format('d/m/Y') : '-' }}</td>
-                        <td>
-                            @if($loan->status == 'active')
-                                <span class="badge bg-warning">Dipinjam</span>
-                            @else
-                                <span class="badge bg-success">Dikembalikan</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-5">
-                                <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
-                                Belum ada riwayat peminjaman
-                                <br>
-                                <a href="{{ route('user.books.index') }}" class="btn btn-primary mt-3">
-                                    <i class="fas fa-search"></i> Cari Buku
-                                </a>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    <table class="min-w-full border">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="px-4 py-2 border">No</th>
+                                <th class="px-4 py-2 border">Buku</th>
+                                <th class="px-4 py-2 border">Tgl Pinjam</th>
+                                <th class="px-4 py-2 border">Tenggat</th>
+                                <th class="px-4 py-2 border">Tgl Kembali</th>
+                                <th class="px-4 py-2 border">Status</th>
+                             </td>
+                        </thead>
+                        <tbody>
+                            @foreach($loans as $loan)
+                            <tr>
+                                <td class="px-4 py-2 border text-center">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-2 border">{{ $loan->book->title }}</td>
+                                <td class="px-4 py-2 border">{{ $loan->loan_date->format('d/m/Y') }}</td>
+                                <td class="px-4 py-2 border">
+                                    <span class="{{ $loan->due_date->isPast() && $loan->status == 'active' ? 'text-red-600 font-bold' : '' }}">
+                                        {{ $loan->due_date->format('d/m/Y') }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-2 border">{{ $loan->return_date ? $loan->return_date->format('d/m/Y') : '-' }}</td>
+                                <td class="px-4 py-2 border">
+                                    @if($loan->status == 'active')
+                                        <span class="bg-yellow-500 text-white px-2 py-1 rounded text-sm">Dipinjam</span>
+                                    @else
+                                        <span class="bg-green-500 text-white px-2 py-1 rounded text-sm">Dikembalikan</span>
+                                    @endif
+                                </td>
+                             </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    
+                    <div class="mt-4">
+                        {{ $loans->links() }}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="card-footer bg-white border-0">
-        <div class="d-flex justify-content-center">
-            {{ $loans->links() }}
-        </div>
-    </div>
-</div>
-@endsection
+</x-app-layout>

@@ -1,106 +1,62 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Dashboard Peminjam
+        </h2>
+    </x-slot>
 
-@section('title', 'Dashboard Peminjam')
-@section('page-title', 'Dashboard Peminjam')
-
-@section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="card card-stats bg-gradient-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title text-uppercase mb-2">Total Buku Tersedia</h6>
-                            <h2 class="mb-0">{{ $totalBooks }}</h2>
-                        </div>
-                        <div class="rounded-circle bg-white-50 p-3">
-                            <i class="fas fa-book fa-2x text-white"></i>
-                        </div>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <div class="text-2xl font-bold text-blue-600">{{ $totalBooks }}</div>
+                        <div class="text-gray-600">Total Buku Tersedia</div>
+                    </div>
+                </div>
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <div class="text-2xl font-bold text-yellow-600">{{ $myActiveLoans }}</div>
+                        <div class="text-gray-600">Buku yang Dipinjam</div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6 mb-4">
-            <div class="card card-stats bg-gradient-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title text-uppercase mb-2">Buku Dipinjam</h6>
-                            <h2 class="mb-0">{{ $myActiveLoans }}</h2>
-                        </div>
-                        <div class="rounded-circle bg-white-50 p-3">
-                            <i class="fas fa-hand-holding-heart fa-2x text-white"></i>
-                        </div>
-                    </div>
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <h3 class="font-semibold text-lg mb-4">Riwayat Peminjaman Terbaru</h3>
+                    @if($myLoanHistory->count() > 0)
+                        <table class="min-w-full border">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="px-4 py-2 border">Buku</th>
+                                    <th class="px-4 py-2 border">Tgl Pinjam</th>
+                                    <th class="px-4 py-2 border">Tenggat</th>
+                                    <th class="px-4 py-2 border">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($myLoanHistory as $loan)
+                                <tr>
+                                    <td class="px-4 py-2 border">{{ $loan->book->title }}</td>
+                                    <td class="px-4 py-2 border">{{ $loan->loan_date->format('d/m/Y') }}</td>
+                                    <td class="px-4 py-2 border">{{ $loan->due_date->format('d/m/Y') }}</td>
+                                    <td class="px-4 py-2 border">
+                                        @if($loan->status == 'active')
+                                            <span class="bg-yellow-500 text-white px-2 py-1 rounded text-sm">Dipinjam</span>
+                                        @else
+                                            <span class="bg-green-500 text-white px-2 py-1 rounded text-sm">Dikembalikan</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <p class="text-gray-500">Belum ada riwayat peminjaman</p>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="card table-custom mt-4">
-        <div class="card-header bg-white border-0 py-3">
-            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Riwayat Peminjaman Terbaru</h5>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Buku</th>
-                            <th>Tgl Pinjam</th>
-                            <th>Tenggat</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($myLoanHistory as $loan)
-                        <tr>
-                            <td><strong>{{ $loan->book->title }}</strong></td>
-                            <td>{{ $loan->loan_date->format('d/m/Y') }}</td>
-                            <td>
-                                <span class="badge {{ $loan->due_date->isPast() && $loan->status == 'active' ? 'bg-danger' : 'bg-info' }}">
-                                    {{ $loan->due_date->format('d/m/Y') }}
-                                </span>
-                            </td>
-                            <td>
-                                @if($loan->status == 'active')
-                                    <span class="badge bg-warning">Dipinjam</span>
-                                @else
-                                    <span class="badge bg-success">Dikembalikan</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center text-muted py-4">
-                                    <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
-                                    Belum ada riwayat peminjaman
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="text-center mt-4">
-        <a href="{{ route('user.books.index') }}" class="btn btn-primary btn-lg px-5">
-            <i class="fas fa-search me-2"></i> Cari Buku untuk Dipinjam
-        </a>
-    </div>
-</div>
-
-<style>
-    .bg-gradient-info {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    }
-    .bg-gradient-warning {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    }
-    .bg-white-50 {
-        background: rgba(255,255,255,0.2);
-    }
-</style>
-@endsection
+</x-app-layout>

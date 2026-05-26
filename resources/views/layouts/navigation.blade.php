@@ -98,3 +98,26 @@
         </div>
     </div>
 </nav>
+
+<!-- Navigation Links -->
+<div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+        {{ __('Dashboard') }}
+    </x-nav-link>
+    
+    @if(auth()->user()->role == 'admin')
+    <x-nav-link :href="route('admin.books.index')" :active="request()->routeIs('admin.books.*')">
+        {{ __('Data Buku') }}
+    </x-nav-link>
+    <x-nav-link :href="route('admin.loans.index')" :active="request()->routeIs('admin.loans.*')">
+        {{ __('Kelola Peminjaman') }}
+    </x-nav-link>
+    @else
+    <x-nav-link :href="route('user.books.index')" :active="request()->routeIs('user.books.*')">
+        {{ __('Katalog Buku') }}
+    </x-nav-link>
+    <x-nav-link :href="route('user.my-loans')" :active="request()->routeIs('user.my-loans')">
+        {{ __('Riwayat Peminjaman') }}
+    </x-nav-link>
+    @endif
+</div>

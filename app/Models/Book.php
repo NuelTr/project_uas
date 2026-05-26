@@ -20,7 +20,7 @@ class Book extends Model
 
     public function isAvailable()
     {
-        $borrowed = $this->loans()->where('status', 'active')->count();
-        return $this->stock > $borrowed;
+    $borrowed = $this->loans()->where('status', 'active')->count();
+    return $this->stock > $borrowed;
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -10,8 +11,9 @@ class BookController extends Controller
 {
     public function index()
     {
-        $books = Book::latest()->paginate(10);
-        return view('admin.books.index', compact('books'));
+       $books = Book::latest()->paginate(10);
+    dd($books); // TAMBAHKAN INI DULU untuk test
+    return view('admin.books.index', compact('books'));
     }
 
     public function create()
@@ -41,7 +43,7 @@ class BookController extends Controller
         
         Book::create($data);
         
-        return redirect()->route('books.index')->with('success', 'Buku berhasil ditambahkan');
+        return redirect()->route('admin.books.index')->with('success', 'Buku berhasil ditambahkan');
     }
 
     public function edit(Book $book)
@@ -74,7 +76,7 @@ class BookController extends Controller
         
         $book->update($data);
         
-        return redirect()->route('books.index')->with('success', 'Buku berhasil diupdate');
+        return redirect()->route('admin.books.index')->with('success', 'Buku berhasil diupdate');
     }
 
     public function destroy(Book $book)
@@ -83,6 +85,6 @@ class BookController extends Controller
             Storage::disk('public')->delete($book->cover);
         }
         $book->delete();
-        return redirect()->route('books.index')->with('success', 'Buku berhasil dihapus');
+        return redirect()->route('admin.books.index')->with('success', 'Buku berhasil dihapus');
     }
 }

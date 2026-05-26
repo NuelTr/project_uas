@@ -23,7 +23,7 @@ class DashboardController extends Controller
             $myActiveLoans = Loan::where('user_id', auth()->id())->where('status', 'active')->count();
             $myLoanHistory = Loan::where('user_id', auth()->id())->with('book')->latest()->take(5)->get();
             
-            return view('dashboard-user', compact('totalBooks', 'myActiveLoans', 'myLoanHistory'));
+            return view('user.dashboard', compact('totalBooks', 'myActiveLoans', 'myLoanHistory'));
         }
     }
 }

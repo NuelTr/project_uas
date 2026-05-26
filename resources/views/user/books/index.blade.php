@@ -1,81 +1,51 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Katalog Buku
+        </h2>
+    </x-slot>
 
-@section('title', 'Daftar Buku')
-@section('page-title', 'Katalog Buku')
-
-@section('content')
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <form action="{{ route('user.books.index') }}" method="GET" class="row g-3">
-                    <div class="col-md-10">
-                        <input type="text" name="search" class="form-control form-control-lg" 
-                               placeholder="Cari judul buku, pengarang, atau penerbit..." 
-                               value="{{ request('search') }}">
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-search"></i> Cari
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    @forelse($books as $book)
-    <div class="col-md-3 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="position-relative">
-                @if($book->cover)
-                    <img src="{{ Storage::url($book->cover) }}" class="card-img-top" alt="{{ $book->title }}" style="height: 250px; object-fit: cover;">
-                @else
-                    <div class="bg-light text-center py-5" style="height: 250px;">
-                        <i class="fas fa-book fa-4x text-secondary"></i>
-                    </div>
-                @endif
-                <span class="badge {{ $book->isAvailable() ? 'bg-success' : 'bg-danger' }} position-absolute top-0 end-0 m-2">
-                    {{ $book->isAvailable() ? 'Tersedia' : 'Sedang Dipinjam' }}
-                </span>
-            </div>
-            <div class="card-body">
-                <h6 class="card-title">{{ Str::limit($book->title, 40) }}</h6>
-                <p class="card-text small text-muted mb-1">
-                    <i class="fas fa-user"></i> {{ $book->author }}
-                </p>
-                <p class="card-text small text-muted">
-                    <i class="fas fa-building"></i> {{ $book->publisher }}
-                </p>
-                <div class="d-flex justify-content-between align-items-center mt-2">
-                    <span class="badge bg-info">Stok: {{ $book->stock }}</span>
-                    @if($book->isAvailable())
-                        <a href="{{ route('user.books.show', $book) }}" class="btn btn-sm btn-primary">
-                            <i class="fas fa-hand-holding-heart"></i> Pinjam
-                        </a>
-                    @else
-                        <button class="btn btn-sm btn-secondary" disabled>
-                            <i class="fas fa-times-circle"></i> Habis
-                        </button>
-                    @endif
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    {{ session('success') }}
                 </div>
+            @endif
+
+            @if(session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                @foreach($books as $book)
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-4">
+                        @if($book->cover)
+                            <img src="{{ Storage::url($book->cover) }}" class="w-full h-48 object-cover rounded">
+                        @else
+                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center rounded">
+                                <span class="text-4xl">📚</span>
+                            </div>
+                        @endif
+                        <h3 class="font-bold mt-2">{{ $book->title }}</h3>
+                        <p class="text-sm text-gray-600">Pengarang: {{ $book->author }}</p>
+                        <p class="text-sm text-gray-600">Stok: {{ $book->stock }}</p>
+                        <div class="mt-2">
+                            <a href="{{ route('user.books.show', $book) }}" class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                                Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            
+            <div class="mt-4">
+                {{ $books->links() }}
             </div>
         </div>
     </div>
-    @empty
-    <div class="col-12">
-        <div class="text-center py-5">
-            <i class="fas fa-search fa-4x text-muted mb-3"></i>
-            <h5 class="text-muted">Buku tidak ditemukan</h5>
-            <p class="text-muted">Coba dengan kata kunci yang berbeda</p>
-        </div>
-    </div>
-    @endforelse
-</div>
-
-<div class="d-flex justify-content-center mt-4">
-    {{ $books->withQueryString()->links() }}
-</div>
-@endsection
+</x-app-layout>
